@@ -3,7 +3,7 @@ package net.steelphoenix.nbtlib;
 /**
  * A base numeric NBT tag implementation.
  *
- * @param <E> Number type.
+ * @param <T> Number type.
  * @author SteelPhoenix
  */
 public abstract class AbstractNumericNBTTag<T extends Number> extends AbstractNBTTag<T> implements INumericNBTTag<T> {

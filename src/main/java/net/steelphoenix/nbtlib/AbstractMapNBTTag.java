@@ -11,8 +11,6 @@ import java.util.function.Function;
 /**
  * A base map NBT tag implementation.
  *
- * @param <K> Key type.
- * @param <V> Value type.
  * @author SteelPhoenix
  */
 public abstract class AbstractMapNBTTag extends AbstractNBTTag<Map<String, INBTTag<?>>> implements IMapNBTTag<String, INBTTag<?>> {
