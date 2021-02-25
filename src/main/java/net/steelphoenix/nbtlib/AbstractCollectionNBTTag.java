@@ -19,8 +19,8 @@ import java.util.stream.Stream;
  */
 public abstract class AbstractCollectionNBTTag<E extends INBTTag<?>> extends AbstractNBTTag<List<E>> implements ICollectionNBTTag<E> {
 
-	protected AbstractCollectionNBTTag(NBTTagType type) {
-		super(type);
+	protected AbstractCollectionNBTTag(NBTTagType type, List<E> value) {
+		super(type, value);
 	}
 
 	@Override
@@ -30,160 +30,157 @@ public abstract class AbstractCollectionNBTTag<E extends INBTTag<?>> extends Abs
 
 	@Override
 	public int size() {
-		return super.getValue().size();
+		return getValue0().size();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return super.getValue().isEmpty();
+		return getValue0().isEmpty();
 	}
 
 	@Override
 	public E get(int index) {
-		return super.getValue().get(index);
+		return getValue0().get(index);
 	}
 
 	@Override
 	public E set(int index, E element) {
-		return super.getValue().set(index, element);
+		return getValue0().set(index, element);
 	}
 
 	@Override
 	public boolean add(E element) {
-		return super.getValue().add(element);
+		return getValue0().add(element);
 	}
 
 	@Override
 	public void add(int index, E element) {
-		super.getValue().add(index, element);
+		getValue0().add(index, element);
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends E> collection) {
-		return super.getValue().addAll(collection);
+		return getValue0().addAll(collection);
 	}
 
 	@Override
 	public boolean addAll(int index, Collection<? extends E> collection) {
-		return super.getValue().addAll(index, collection);
+		return getValue0().addAll(index, collection);
 	}
 
 	@Override
 	public boolean remove(Object object) {
-		return super.getValue().remove(object);
+		return getValue0().remove(object);
 	}
 
 	@Override
 	public E remove(int index) {
-		return super.getValue().remove(index);
+		return getValue0().remove(index);
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> collection) {
-		return super.getValue().removeAll(collection);
+		return getValue0().removeAll(collection);
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> collection) {
-		return super.getValue().retainAll(collection);
+		return getValue0().retainAll(collection);
 	}
 
 	@Override
 	public void clear() {
-		super.getValue().clear();
+		getValue0().clear();
 	}
 
 	@Override
 	public boolean contains(Object object) {
-		return super.getValue().contains(object);
+		return getValue0().contains(object);
 	}
 
 	@Override
 	public boolean containsAll(Collection<?> collection) {
-		return super.getValue().containsAll(collection);
+		return getValue0().containsAll(collection);
 	}
 
 	@Override
 	public int indexOf(Object object) {
-		return super.getValue().indexOf(object);
+		return getValue0().indexOf(object);
 	}
 
 	@Override
 	public int lastIndexOf(Object object) {
-		return super.getValue().lastIndexOf(object);
+		return getValue0().lastIndexOf(object);
 	}
 
 	@Override
 	public Iterator<E> iterator() {
-		return super.getValue().iterator();
+		return getValue0().iterator();
 	}
 
 	@Override
 	public ListIterator<E> listIterator() {
-		return super.getValue().listIterator();
+		return getValue0().listIterator();
 	}
 
 	@Override
 	public ListIterator<E> listIterator(int index) {
-		return super.getValue().listIterator(index);
+		return getValue0().listIterator(index);
 	}
 
 	@Override
 	public Spliterator<E> spliterator() {
-		return super.getValue().spliterator();
+		return getValue0().spliterator();
 	}
 
 	@Override
 	public Stream<E> stream() {
-		return super.getValue().stream();
+		return getValue0().stream();
 	}
 
 	@Override
 	public Stream<E> parallelStream() {
-		return super.getValue().parallelStream();
+		return getValue0().parallelStream();
 	}
 
 	@Override
 	public void forEach(Consumer<? super E> action) {
-		super.getValue().forEach(action);
+		getValue0().forEach(action);
 	}
 
 	@Override
 	public void replaceAll(UnaryOperator<E> operator) {
-		super.getValue().replaceAll(operator);
+		getValue0().replaceAll(operator);
 	}
 
 	@Override
 	public boolean removeIf(Predicate<? super E> filter) {
-		return super.getValue().removeIf(filter);
+		return getValue0().removeIf(filter);
 	}
 
 	@Override
 	public void sort(Comparator<? super E> comparator) {
-		super.getValue().sort(comparator);
+		getValue0().sort(comparator);
 	}
 
 	@Override
 	public List<E> subList(int fromIndex, int toIndex) {
-		return super.getValue().subList(fromIndex, toIndex);
+		return getValue0().subList(fromIndex, toIndex);
 	}
 
 	@Override
 	public Object[] toArray() {
-		return super.getValue().toArray();
+		return getValue0().toArray();
 	}
 
 	@Override
 	public <T> T[] toArray(T[] array) {
-		return super.getValue().toArray(array);
+		return getValue0().toArray(array);
 	}
 
 	@Override
 	public boolean isValid() {
-		if (!super.isValid()) {
-			return false;
-		}
-		for (INBTTag<?> tag : this) {
+		for (E tag : this) {
 			if (tag == null || tag.getType() != getElementType() || !tag.isValid()) {
 				return false;
 			}
@@ -193,11 +190,8 @@ public abstract class AbstractCollectionNBTTag<E extends INBTTag<?>> extends Abs
 
 	@Override
 	public int hashCode() {
-		if (getValue0() == null) {
-			return 0;
-		}
 		int result = 1;
-		for (INBTTag<?> tag : this) {
+		for (E tag : this) {
 			result = 31 * result + (tag == null ? 0 : tag.hashCode());
 		}
 		return result;
@@ -205,29 +199,20 @@ public abstract class AbstractCollectionNBTTag<E extends INBTTag<?>> extends Abs
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof AbstractCollectionNBTTag)) {
+		if (!(object instanceof ICollectionNBTTag)) {
 			return false;
 		}
-		AbstractCollectionNBTTag<?> other = (AbstractCollectionNBTTag<?>) object;
+		ICollectionNBTTag<?> other = (ICollectionNBTTag<?>) object;
 
 		if (getElementType() != other.getElementType()) {
 			return false;
 		}
 
-		if (getValue0() == null ^ other.getValue0() == null) {
-			return false;
-		}
-
-		if (getValue0() == null && other.getValue0() == null) {
-			return true;
-		}
-
-
 		Iterator<E> iterator0 = iterator();
-		Iterator<?> iterator1 = other.iterator();
+		Iterator<? extends INBTTag<?>> iterator1 = other.iterator();
 		while (iterator0.hasNext() && iterator1.hasNext()) {
-			INBTTag<?> element0 = iterator0.next();
-			Object element1 = iterator1.next();
+			E element0 = iterator0.next();
+			INBTTag<?> element1 = iterator1.next();
 			if (element0 == null ? element1 != null : !element0.equals(element1)) {
 				return false;
 			}
@@ -241,28 +226,22 @@ public abstract class AbstractCollectionNBTTag<E extends INBTTag<?>> extends Abs
 		builder
 				.append("NBTTag[type=")
 				.append(getType().getName())
-				.append(", value=");
-
-		if (getValue0() == null) {
-			builder.append("null");
-		}
-		else {
-			builder.append("List[");
-			Iterator<E> iterator = iterator();
-			boolean first = true;
-			while (iterator.hasNext()) {
-				if (!first) {
-					builder
-							.append(',')
-							.append(' ');
-				}
-				first = false;
-				E element = iterator.next();
-				builder.append(element);
+				.append(", value=List[");
+		Iterator<E> iterator = iterator();
+		boolean first = true;
+		while (iterator.hasNext()) {
+			if (!first) {
+				builder
+						.append(',')
+						.append(' ');
 			}
-			builder.append(']');
+			first = false;
+			E element = iterator.next();
+			builder.append(element);
 		}
-		builder.append(']');
+		builder
+				.append(']')
+				.append(']');
 		return builder.toString();
 	}
 }

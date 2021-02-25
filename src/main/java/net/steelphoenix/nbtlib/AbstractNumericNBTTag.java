@@ -8,8 +8,8 @@ package net.steelphoenix.nbtlib;
  */
 public abstract class AbstractNumericNBTTag<T extends Number> extends AbstractNBTTag<T> implements INumericNBTTag<T> {
 
-	protected AbstractNumericNBTTag(NBTTagType type) {
-		super(type);
+	protected AbstractNumericNBTTag(NBTTagType type, T value) {
+		super(type, value);
 	}
 
 	@Override

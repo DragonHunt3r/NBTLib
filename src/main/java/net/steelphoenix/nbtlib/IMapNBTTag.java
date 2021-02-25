@@ -5,10 +5,9 @@ import java.util.Map;
 /**
  * A map NBT tag.
  *
- * @param <K> Key type.
  * @param <V> Value type.
  * @author SteelPhoenix
  */
-public interface IMapNBTTag<K, V> extends INBTTag<Map<K, V>>, Map<K, V> {
+public interface IMapNBTTag<V extends INBTTag<?>> extends INBTTag<Map<String, V>>, Map<String, V> {
 	// Nothing
 }

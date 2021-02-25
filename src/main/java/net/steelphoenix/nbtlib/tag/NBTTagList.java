@@ -13,7 +13,7 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A list tag.
- * This tag is valid if a value is set, the array does not contain null elements, the array elements are of the correct type and all values are valid.
+ * This tag is valid if the array does not contain null elements, the array elements are of the correct type and all values are valid.
  *
  * @author SteelPhoenix
  */
@@ -23,23 +23,15 @@ public class NBTTagList extends AbstractCollectionNBTTag<INBTTag<?>> {
 	private NBTTagType type = NBTTagType.END;
 
 	public NBTTagList() {
-		super(TYPE);
+		this(TYPE, new INBTTag<?>[0]);
 	}
 
 	public NBTTagList(NBTTagType type, INBTTag<?>[] value) {
-		super(TYPE);
+		super(TYPE, toList(value));
 		if (type == null) {
 			throw new NullPointerException("Type cannot be null");
 		}
-		if (value == null) {
-			throw new NullPointerException("Value cannot be null");
-		}
-		List<INBTTag<?>> list = new ArrayList<>();
-		for (int i = 0; i < value.length; i++) {
-			list.add(value[i] == null ? null : value[i].copy());
-		}
 		setElementType(type);
-		setValue0(list);
 	}
 
 	@Override
@@ -58,8 +50,10 @@ public class NBTTagList extends AbstractCollectionNBTTag<INBTTag<?>> {
 
 	@Override
 	public List<INBTTag<?>> getValue() {
-		List<INBTTag<?>> list = new ArrayList<>();
-		forEach(e -> list.add(e.copy()));
+		List<INBTTag<?>> list = new ArrayList<>(size());
+		for (INBTTag<?> tag : this) {
+			list.add(tag == null ? null : tag.copy());
+		}
 		return list;
 	}
 
@@ -70,9 +64,11 @@ public class NBTTagList extends AbstractCollectionNBTTag<INBTTag<?>> {
 			throw new NullPointerException("Value cannot be null");
 		}
 
-		List<INBTTag<?>> list = new ArrayList<>();
-		value.forEach(e -> list.add(e.copy()));
-		super.setValue(list);
+		List<INBTTag<?>> list = new ArrayList<>(value.size());
+		for (INBTTag<?> tag : value) {
+			list.add(tag == null ? null : tag.copy());
+		}
+		setValue0(list);
 	}
 
 	@Override
@@ -87,8 +83,8 @@ public class NBTTagList extends AbstractCollectionNBTTag<INBTTag<?>> {
 
 		output.writeByte(isEmpty() ? NBTTagType.END.getId() : type.getId());
 		output.writeInt(size());
-		for (int i = 0; i < size(); i++) {
-			get(i).write(output);
+		for (INBTTag<?> tag : this) {
+			tag.write(output);
 		}
 	}
 
@@ -96,15 +92,17 @@ public class NBTTagList extends AbstractCollectionNBTTag<INBTTag<?>> {
 	public NBTTagList copy() {
 		NBTTagList tag = new NBTTagList();
 		tag.setElementType(getElementType());
-
-		// Create a copy if there is a value set
-		tag.setValue0(getValue0() == null ? null : getValue());
-
+		tag.setValue0(getValue());
 		return tag;
 	}
 
 	@Override
 	public String asSNBT() {
+		// Preconditions
+		if (!isValid()) {
+			throw new MalformedNBTException("Tag is not valid");
+		}
+
 		StringBuilder builder = new StringBuilder();
 		builder.append('[');
 		Iterator<INBTTag<?>> iterator = iterator();
@@ -119,5 +117,24 @@ public class NBTTagList extends AbstractCollectionNBTTag<INBTTag<?>> {
 		}
 		builder.append(']');
 		return builder.toString();
+	}
+
+	/**
+	 * Convert an array to a tag list.
+	 *
+	 * @param array Target array.
+	 * @return the created list.
+	 */
+	private static List<INBTTag<?>> toList(INBTTag<?>[] array) {
+		// Preconditions
+		if (array == null) {
+			throw new NullPointerException("Array cannot be null");
+		}
+
+		List<INBTTag<?>> list = new ArrayList<>(array.length);
+		for (int i = 0; i < array.length; i++) {
+			list.add(array[i] == null ? null : array[i].copy());
+		}
+		return list;
 	}
 }

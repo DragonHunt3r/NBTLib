@@ -12,7 +12,7 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A Byte array tag.
- * This tag is valid if a value is set, the array does not contain null elements and all values are valid.
+ * This tag is valid if the array does not contain null elements and all values are valid.
  *
  * @author SteelPhoenix
  */
@@ -21,19 +21,11 @@ public class NBTTagByteArray extends AbstractCollectionNBTTag<NBTTagByte> {
 	public static final NBTTagType TYPE = NBTTagType.BYTE_ARRAY;
 
 	public NBTTagByteArray() {
-		super(TYPE);
+		this(new byte[0]);
 	}
 
 	public NBTTagByteArray(byte[] value) {
-		super(TYPE);
-		if (value == null) {
-			throw new NullPointerException("Value cannot be null");
-		}
-		List<NBTTagByte> list = new ArrayList<>();
-		for (int i = 0; i < value.length; i++) {
-			list.add(new NBTTagByte(value[i]));
-		}
-		setValue0(list);
+		super(TYPE, toList(value));
 	}
 
 	@Override
@@ -43,8 +35,10 @@ public class NBTTagByteArray extends AbstractCollectionNBTTag<NBTTagByte> {
 
 	@Override
 	public List<NBTTagByte> getValue() {
-		List<NBTTagByte> list = new ArrayList<>();
-		forEach(e -> list.add(e.copy()));
+		List<NBTTagByte> list = new ArrayList<>(size());
+		for (NBTTagByte tag : this) {
+			list.add(tag == null ? null : tag.copy());
+		}
 		return list;
 	}
 
@@ -55,9 +49,11 @@ public class NBTTagByteArray extends AbstractCollectionNBTTag<NBTTagByte> {
 			throw new NullPointerException("Value cannot be null");
 		}
 
-		List<NBTTagByte> list = new ArrayList<>();
-		value.forEach(e -> list.add(e.copy()));
-		super.setValue(list);
+		List<NBTTagByte> list = new ArrayList<>(value.size());
+		for (NBTTagByte tag : value) {
+			list.add(tag == null ? null : tag.copy());
+		}
+		setValue0(list);
 	}
 
 	@Override
@@ -71,18 +67,15 @@ public class NBTTagByteArray extends AbstractCollectionNBTTag<NBTTagByte> {
 		}
 
 		output.writeInt(size());
-		for (int i = 0; i < size(); i++) {
-			output.writeByte(get(i).getAsByte());
+		for (NBTTagByte tag : this) {
+			output.writeByte(tag.getAsByte());
 		}
 	}
 
 	@Override
 	public NBTTagByteArray copy() {
 		NBTTagByteArray tag = new NBTTagByteArray();
-
-		// Create a copy if there is a value set
-		tag.setValue0(getValue0() == null ? null : getValue());
-
+		tag.setValue0(getValue());
 		return tag;
 	}
 
@@ -109,5 +102,24 @@ public class NBTTagByteArray extends AbstractCollectionNBTTag<NBTTagByte> {
 		}
 		builder.append(']');
 		return builder.toString();
+	}
+
+	/**
+	 * Convert an array to a tag list.
+	 *
+	 * @param array Target array.
+	 * @return the created list.
+	 */
+	private static List<NBTTagByte> toList(byte[] array) {
+		// Preconditions
+		if (array == null) {
+			throw new NullPointerException("Array cannot be null");
+		}
+
+		List<NBTTagByte> list = new ArrayList<>(array.length);
+		for (int i = 0; i < array.length; i++) {
+			list.add(new NBTTagByte(array[i]));
+		}
+		return list;
 	}
 }

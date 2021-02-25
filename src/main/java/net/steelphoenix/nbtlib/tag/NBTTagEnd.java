@@ -12,22 +12,13 @@ import net.steelphoenix.nbtlib.NBTTagType;
  *
  * @author SteelPhoenix
  */
-public class NBTTagEnd extends AbstractNBTTag<Void> {
+public class NBTTagEnd extends AbstractNBTTag<Object> {
 
 	public static final NBTTagType TYPE = NBTTagType.END;
+	private static final Object OBJECT = new Object();
 
 	public NBTTagEnd() {
-		super(TYPE);
-	}
-
-	@Override
-	public Void getValue() {
-		return null;
-	}
-
-	@Override
-	public void setValue(Void value) {
-		throw new UnsupportedOperationException("Cannot set data for " + getType().getName());
+		super(TYPE, OBJECT);
 	}
 
 	@Override
@@ -46,23 +37,13 @@ public class NBTTagEnd extends AbstractNBTTag<Void> {
 	}
 
 	@Override
-	public boolean isValid() {
-		return true;
-	}
-
-	@Override
 	public String toString() {
 		// No value on an end tag
 		return "NBTTag[type=" + getType().getName() + "]";
 	}
 
 	@Override
-	protected Void getValue0() {
-		return null;
-	}
-
-	@Override
-	protected void setValue0(Void value) {
+	protected void setValue0(Object value) {
 		throw new UnsupportedOperationException("Cannot set data for " + getType().getName());
 	}
 }

@@ -9,7 +9,7 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A short tag.
- * This tag is valid if a value is set.
+ * This tag is always valid.
  *
  * @author SteelPhoenix
  */
@@ -18,12 +18,11 @@ public class NBTTagShort extends AbstractNumericNBTTag<Short> {
 	public static final NBTTagType TYPE = NBTTagType.SHORT;
 
 	public NBTTagShort() {
-		super(TYPE);
+		this((short) 0);
 	}
 
 	public NBTTagShort(short value) {
-		super(TYPE);
-		setValue(Short.valueOf(value));
+		super(TYPE, Short.valueOf(value));
 	}
 
 	@Override
@@ -48,7 +47,7 @@ public class NBTTagShort extends AbstractNumericNBTTag<Short> {
 	@Override
 	public NBTTagShort copy() {
 		NBTTagShort tag = new NBTTagShort();
-		tag.setValue0(getValue0());
+		tag.setValue0(getValue());
 		return tag;
 	}
 

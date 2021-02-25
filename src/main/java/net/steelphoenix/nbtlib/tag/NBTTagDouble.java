@@ -9,7 +9,7 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A double tag.
- * This tag is valid if a value is set.
+ * This tag is always valid.
  *
  * @author SteelPhoenix
  */
@@ -18,12 +18,11 @@ public class NBTTagDouble extends AbstractNumericNBTTag<Double> {
 	public static final NBTTagType TYPE = NBTTagType.DOUBLE;
 
 	public NBTTagDouble() {
-		super(TYPE);
+		this(0D);
 	}
 
 	public NBTTagDouble(double value) {
-		super(TYPE);
-		setValue(Double.valueOf(value));
+		super(TYPE, Double.valueOf(value));
 	}
 
 	@Override
@@ -66,7 +65,7 @@ public class NBTTagDouble extends AbstractNumericNBTTag<Double> {
 	@Override
 	public NBTTagDouble copy() {
 		NBTTagDouble tag = new NBTTagDouble();
-		tag.setValue0(getValue0());
+		tag.setValue0(getValue());
 		return tag;
 	}
 

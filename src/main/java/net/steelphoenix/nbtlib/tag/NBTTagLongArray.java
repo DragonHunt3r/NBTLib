@@ -12,7 +12,7 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A long array tag.
- * This tag is valid if a value is set, the array does not contain null elements and all values are valid.
+ * This tag is valid if the array does not contain null elements and all values are valid.
  *
  * @author SteelPhoenix
  */
@@ -25,15 +25,7 @@ public class NBTTagLongArray extends AbstractCollectionNBTTag<NBTTagLong> {
 	}
 
 	public NBTTagLongArray(long[] value) {
-		super(TYPE);
-		if (value == null) {
-			throw new NullPointerException("Value cannot be null");
-		}
-		List<NBTTagLong> list = new ArrayList<>();
-		for (int i = 0; i < value.length; i++) {
-			list.add(new NBTTagLong(value[i]));
-		}
-		setValue0(list);
+		super(TYPE, toList(value));
 	}
 
 	@Override
@@ -43,8 +35,10 @@ public class NBTTagLongArray extends AbstractCollectionNBTTag<NBTTagLong> {
 
 	@Override
 	public List<NBTTagLong> getValue() {
-		List<NBTTagLong> list = new ArrayList<>();
-		forEach(e -> list.add(e.copy()));
+		List<NBTTagLong> list = new ArrayList<>(size());
+		for (NBTTagLong tag : this) {
+			list.add(tag == null ? null : tag.copy());
+		}
 		return list;
 	}
 
@@ -55,9 +49,11 @@ public class NBTTagLongArray extends AbstractCollectionNBTTag<NBTTagLong> {
 			throw new NullPointerException("Value cannot be null");
 		}
 
-		List<NBTTagLong> list = new ArrayList<>();
-		value.forEach(e -> list.add(e.copy()));
-		super.setValue(list);
+		List<NBTTagLong> list = new ArrayList<>(value.size());
+		for (NBTTagLong tag : value) {
+			list.add(tag == null ? null : tag.copy());
+		}
+		setValue0(list);
 	}
 
 	@Override
@@ -71,18 +67,15 @@ public class NBTTagLongArray extends AbstractCollectionNBTTag<NBTTagLong> {
 		}
 
 		output.writeInt(size());
-		for (int i = 0; i < size(); i++) {
-			output.writeLong(get(i).getAsLong());
+		for (NBTTagLong tag : this) {
+			output.writeLong(tag.getAsLong());
 		}
 	}
 
 	@Override
 	public NBTTagLongArray copy() {
 		NBTTagLongArray tag = new NBTTagLongArray();
-
-		// Create a copy if there is a value set
-		tag.setValue0(getValue0() == null ? null : getValue());
-
+		tag.setValue0(getValue());
 		return tag;
 	}
 
@@ -109,5 +102,24 @@ public class NBTTagLongArray extends AbstractCollectionNBTTag<NBTTagLong> {
 		}
 		builder.append(']');
 		return builder.toString();
+	}
+
+	/**
+	 * Convert an array to a tag list.
+	 *
+	 * @param array Target array.
+	 * @return the created list.
+	 */
+	private static List<NBTTagLong> toList(long[] array) {
+		// Preconditions
+		if (array == null) {
+			throw new NullPointerException("Array cannot be null");
+		}
+
+		List<NBTTagLong> list = new ArrayList<>(array.length);
+		for (int i = 0; i < array.length; i++) {
+			list.add(new NBTTagLong(array[i]));
+		}
+		return list;
 	}
 }

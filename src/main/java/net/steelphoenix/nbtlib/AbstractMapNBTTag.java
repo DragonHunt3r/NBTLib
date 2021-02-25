@@ -11,135 +11,133 @@ import java.util.function.Function;
 /**
  * A base map NBT tag implementation.
  *
+ * @param <V> Value type.
  * @author SteelPhoenix
  */
-public abstract class AbstractMapNBTTag extends AbstractNBTTag<Map<String, INBTTag<?>>> implements IMapNBTTag<String, INBTTag<?>> {
+public abstract class AbstractMapNBTTag<V extends INBTTag<?>> extends AbstractNBTTag<Map<String, V>> implements IMapNBTTag<V> {
 
-	protected AbstractMapNBTTag(NBTTagType type) {
-		super(type);
+	protected AbstractMapNBTTag(NBTTagType type, Map<String, V> value) {
+		super(type, value);
 	}
 
 	@Override
 	public int size() {
-		return super.getValue().size();
+		return getValue0().size();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return super.getValue().isEmpty();
+		return getValue0().isEmpty();
 	}
 
 	@Override
-	public INBTTag<?> get(Object key) {
-		return super.getValue().get(key);
+	public V get(Object key) {
+		return getValue0().get(key);
 	}
 
 	@Override
-	public INBTTag<?> getOrDefault(Object key, INBTTag<?> def) {
-		return super.getValue().getOrDefault(key, def);
+	public V getOrDefault(Object key, V def) {
+		return getValue0().getOrDefault(key, def);
 	}
 
 	@Override
-	public INBTTag<?> put(String key, INBTTag<?> value) {
-		return super.getValue().put(key, value);
+	public V put(String key, V value) {
+		return getValue0().put(key, value);
 	}
 
 	@Override
-	public INBTTag<?> putIfAbsent(String key, INBTTag<?> value) {
-		return super.getValue().putIfAbsent(key, value);
+	public V putIfAbsent(String key, V value) {
+		return getValue0().putIfAbsent(key, value);
 	}
 
 	@Override
-	public void putAll(Map<? extends String, ? extends INBTTag<?>> map) {
-		super.getValue().putAll(map);
+	public void putAll(Map<? extends String, ? extends V> map) {
+		getValue0().putAll(map);
 	}
 
 	@Override
-	public INBTTag<?> replace(String key, INBTTag<?> value) {
-		return super.getValue().replace(key, value);
+	public V replace(String key, V value) {
+		return getValue0().replace(key, value);
 	}
 
 	@Override
-	public boolean replace(String key, INBTTag<?> oldValue, INBTTag<?> newValue) {
-		return super.getValue().replace(key, oldValue, newValue);
+	public boolean replace(String key, V oldValue, V newValue) {
+		return getValue0().replace(key, oldValue, newValue);
 	}
 
 	@Override
-	public INBTTag<?> remove(Object key) {
-		return super.getValue().remove(key);
+	public V remove(Object key) {
+		return getValue0().remove(key);
 	}
 
 	@Override
 	public boolean remove(Object key, Object value) {
-		return super.getValue().remove(key, value);
+		return getValue0().remove(key, value);
 	}
 
 	@Override
 	public void clear() {
-		super.getValue().clear();
+		getValue0().clear();
 	}
 
 	@Override
 	public boolean containsKey(Object key) {
-		return super.getValue().containsKey(key);
+		return getValue0().containsKey(key);
 	}
 
 	@Override
 	public boolean containsValue(Object value) {
-		return super.getValue().containsValue(value);
+		return getValue0().containsValue(value);
 	}
 
 	@Override
 	public Set<String> keySet() {
-		return super.getValue().keySet();
+		return getValue0().keySet();
 	}
 
 	@Override
-	public Collection<INBTTag<?>> values() {
-		return super.getValue().values();
+	public Collection<V> values() {
+		return getValue0().values();
 	}
 
 	@Override
-	public Set<Entry<String, INBTTag<?>>> entrySet() {
-		return super.getValue().entrySet();
+	public Set<Entry<String, V>> entrySet() {
+		return getValue0().entrySet();
 	}
 
 	@Override
-	public void forEach(BiConsumer<? super String, ? super INBTTag<?>> action) {
-		super.getValue().forEach(action);
+	public void forEach(BiConsumer<? super String, ? super V> action) {
+		getValue0().forEach(action);
 	}
 
 	@Override
-	public void replaceAll(BiFunction<? super String, ? super INBTTag<?>, ? extends INBTTag<?>> function) {
-		super.getValue().replaceAll(function);
+	public void replaceAll(BiFunction<? super String, ? super V, ? extends V> function) {
+		getValue0().replaceAll(function);
 	}
 
 	@Override
-	public INBTTag<?> merge(String key, INBTTag<?> value, BiFunction<? super INBTTag<?>, ? super INBTTag<?>, ? extends INBTTag<?>> remappingFunction) {
-		return super.getValue().merge(key, value, remappingFunction);
+	public V merge(String key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+		return getValue0().merge(key, value, remappingFunction);
 	}
 
 	@Override
-	public INBTTag<?> compute(String key, BiFunction<? super String, ? super INBTTag<?>, ? extends INBTTag<?>> remappingFunction) {
-		return super.getValue().compute(key, remappingFunction);
+	public V compute(String key, BiFunction<? super String, ? super V, ? extends V> remappingFunction) {
+		return getValue0().compute(key, remappingFunction);
 	}
 
 	@Override
-	public INBTTag<?> computeIfAbsent(String key, Function<? super String, ? extends INBTTag<?>> mappingFunction) {
-		return super.getValue().computeIfAbsent(key, mappingFunction);
+	public V computeIfAbsent(String key, Function<? super String, ? extends V> mappingFunction) {
+		return getValue0().computeIfAbsent(key, mappingFunction);
 	}
 
 	@Override
-	public INBTTag<?> computeIfPresent(String key, BiFunction<? super String, ? super INBTTag<?>, ? extends INBTTag<?>> remappingFunction) {
-		return super.getValue().computeIfPresent(key, remappingFunction);
+	public V computeIfPresent(String key, BiFunction<? super String, ? super V, ? extends V> remappingFunction) {
+		return getValue0().computeIfPresent(key, remappingFunction);
 	}
 
 	@Override
 	public boolean isValid() {
-		if (!super.isValid()) {
-			return false;
-		}
-		for (Entry<String, INBTTag<?>> entry : entrySet()) {
+		for (Entry<String, V> entry : entrySet()) {
 			if (entry.getKey() == null || entry.getValue() == null || !entry.getValue().isValid()) {
 				return false;
 			}
@@ -149,11 +147,8 @@ public abstract class AbstractMapNBTTag extends AbstractNBTTag<Map<String, INBTT
 
 	@Override
 	public int hashCode() {
-		if (getValue0() == null) {
-			return 0;
-		}
 		int result = 0;
-		for (Entry<String, INBTTag<?>> entry : entrySet()) {
+		for (Entry<String, V> entry : entrySet()) {
 			result += ((entry.getKey() == null ? 0 : entry.getKey().hashCode()) ^ (entry.getValue() == null ? 0 : entry.getValue().hashCode()));
 		}
 		return result;
@@ -161,25 +156,17 @@ public abstract class AbstractMapNBTTag extends AbstractNBTTag<Map<String, INBTT
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof AbstractMapNBTTag)) {
+		if (!(object instanceof IMapNBTTag)) {
 			return false;
 		}
-		AbstractMapNBTTag other = (AbstractMapNBTTag) object;
-
-		if (getValue0() == null ^ other.getValue0() == null) {
-			return false;
-		}
-
-		if (getValue0() == null && other.getValue0() == null) {
-			return true;
-		}
+		IMapNBTTag<?> other = (IMapNBTTag<?>) object;
 
 		if (size() != other.size()) {
 			return false;
 		}
 
-		for (Entry<String, INBTTag<?>> entry : entrySet()) {
-			INBTTag<?> value0 = entry.getValue();
+		for (Entry<String, V> entry : entrySet()) {
+			V value0 = entry.getValue();
 
 			if (!other.containsKey(entry.getKey())) {
 				return false;
@@ -199,38 +186,27 @@ public abstract class AbstractMapNBTTag extends AbstractNBTTag<Map<String, INBTT
 		builder
 				.append("NBTTag[type=")
 				.append(getType().getName())
-				.append(", value=");
-
-		if (getValue0() == null) {
-			builder.append((Object) null);
-		}
-		else {
-			builder.append("Map[");
-			Iterator<Entry<String, INBTTag<?>>> iterator = entrySet().iterator();
-			boolean first = true;
-			while (iterator.hasNext()) {
-				if (!first) {
-					builder
-							.append(',')
-							.append(' ');
-				}
-				first = false;
-				Entry<String, INBTTag<?>> entry = iterator.next();
-				if (entry == null) {
-					builder.append((Object) null);
-				}
-				else {
-					builder
-							.append("Entry[key=")
-							.append(entry.getKey())
-							.append(", value=")
-							.append(entry.getValue())
-							.append(']');
-				}
+				.append(", value=Map[");
+		Iterator<Entry<String, V>> iterator = entrySet().iterator();
+		boolean first = true;
+		while (iterator.hasNext()) {
+			if (!first) {
+				builder
+						.append(',')
+						.append(' ');
 			}
-			builder.append(']');
+			first = false;
+			Entry<String, V> entry = iterator.next();
+			builder
+					.append("Entry[key=")
+					.append(entry.getKey())
+					.append(", value=")
+					.append(entry.getValue())
+					.append(']');
 		}
-		builder.append(']');
+		builder
+				.append(']')
+				.append(']');
 		return builder.toString();
 	}
 }

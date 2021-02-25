@@ -9,7 +9,7 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A byte tag.
- * This tag is valid if a value is set.
+ * This tag is always valid.
  * Booleans are also stored in a byte tag.
  *
  * @author SteelPhoenix
@@ -19,7 +19,7 @@ public class NBTTagByte extends AbstractNumericNBTTag<Byte> {
 	public static final NBTTagType TYPE = NBTTagType.BYTE;
 
 	public NBTTagByte() {
-		super(TYPE);
+		this((byte) 0);
 	}
 
 	public NBTTagByte(boolean value) {
@@ -27,9 +27,7 @@ public class NBTTagByte extends AbstractNumericNBTTag<Byte> {
 	}
 
 	public NBTTagByte(byte value) {
-		super(TYPE);
-
-		setValue(Byte.valueOf(value));
+		super(TYPE, Byte.valueOf(value));
 	}
 
 	/**
@@ -65,7 +63,7 @@ public class NBTTagByte extends AbstractNumericNBTTag<Byte> {
 	@Override
 	public NBTTagByte copy() {
 		NBTTagByte tag = new NBTTagByte();
-		tag.setValue0(getValue0());
+		tag.setValue0(getValue());
 		return tag;
 	}
 

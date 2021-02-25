@@ -9,7 +9,7 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A string tag.
- * This tag is valid if a value is set.
+ * This tag is always valid.
  *
  * @author SteelPhoenix
  */
@@ -18,12 +18,11 @@ public class NBTTagString extends AbstractNBTTag<String> {
 	public static final NBTTagType TYPE = NBTTagType.STRING;
 
 	public NBTTagString() {
-		super(TYPE);
+		this("");
 	}
 
 	public NBTTagString(String value) {
-		super(TYPE);
-		setValue(value);
+		super(TYPE, value);
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class NBTTagString extends AbstractNBTTag<String> {
 	@Override
 	public NBTTagString copy() {
 		NBTTagString tag = new NBTTagString();
-		tag.setValue0(getValue0());
+		tag.setValue(getValue0());
 		return tag;
 	}
 

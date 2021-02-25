@@ -8,14 +8,14 @@ package net.steelphoenix.nbtlib;
 public abstract class AbstractNBTTag<T> implements INBTTag<T> {
 
 	private final NBTTagType type;
-	private T value = null;
+	private T value;
 
-	protected AbstractNBTTag(NBTTagType type) {
+	protected AbstractNBTTag(NBTTagType type, T value) {
 		if (type == null) {
 			throw new NullPointerException("Type cannot be null");
 		}
-
 		this.type = type;
+		setValue0(value);
 	}
 
 	@Override
@@ -30,41 +30,31 @@ public abstract class AbstractNBTTag<T> implements INBTTag<T> {
 
 	@Override
 	public T getValue() {
-		// Preconditions
-		if (value == null) {
-			throw new IllegalStateException("No value set");
-		}
-
 		return getValue0();
 	}
 
 	@Override
 	public void setValue(T value) {
-		// Preconditions
-		if (value == null) {
-			throw new NullPointerException("Value cannot be null");
-		}
-
 		setValue0(value);
 	}
 
 	@Override
 	public boolean isValid() {
-		return value != null;
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return value == null ? 0 : value.hashCode();
+		return value.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof AbstractNBTTag)) {
+		if (!(object instanceof INBTTag<?>)) {
 			return false;
 		}
-		AbstractNBTTag<?> other = (AbstractNBTTag<?>) object;
-		return type == other.getType() && (value == null ? other.getValue0() == null : value.equals(other.getValue0()));
+		INBTTag<?> other = (INBTTag<?>) object;
+		return type == other.getType() && value.equals(other.getValue());
 	}
 
 	@Override
@@ -89,6 +79,11 @@ public abstract class AbstractNBTTag<T> implements INBTTag<T> {
 	 * @param value Target value.
 	 */
 	protected void setValue0(T value) {
+		// Preconditions
+		if (value == null) {
+			throw new NullPointerException("Value cannot be null");
+		}
+
 		this.value = value;
 	}
 }

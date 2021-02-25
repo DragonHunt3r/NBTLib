@@ -9,7 +9,7 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A float tag.
- * This tag is valid if a value is set.
+ * This tag is always valid.
  *
  * @author SteelPhoenix
  */
@@ -18,12 +18,11 @@ public class NBTTagFloat extends AbstractNumericNBTTag<Float> {
 	public static final NBTTagType TYPE = NBTTagType.FLOAT;
 
 	public NBTTagFloat() {
-		super(TYPE);
+		this(0F);
 	}
 
 	public NBTTagFloat(float value) {
-		super(TYPE);
-		setValue(Float.valueOf(value));
+		super(TYPE, Float.valueOf(value));
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class NBTTagFloat extends AbstractNumericNBTTag<Float> {
 	@Override
 	public NBTTagFloat copy() {
 		NBTTagFloat tag = new NBTTagFloat();
-		tag.setValue0(getValue0());
+		tag.setValue0(getValue());
 		return tag;
 	}
 

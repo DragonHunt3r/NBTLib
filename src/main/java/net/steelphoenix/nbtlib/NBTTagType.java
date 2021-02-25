@@ -34,11 +34,6 @@ public enum NBTTagType {
 	END ((byte) 0, "TAG_End") {
 
 		@Override
-		public INBTTag<?> create() {
-			return new NBTTagEnd();
-		}
-
-		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
 			// Preconditions
 			if (input == null) {
@@ -61,11 +56,6 @@ public enum NBTTagType {
 	 * TAG_Byte
 	 */
 	BYTE ((byte) 1, "TAG_Byte") {
-
-		@Override
-		public INBTTag<?> create() {
-			return new NBTTagByte((byte) 0);
-		}
 
 		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
@@ -94,11 +84,6 @@ public enum NBTTagType {
 	SHORT ((byte) 2, "TAG_Short") {
 
 		@Override
-		public INBTTag<?> create() {
-			return new NBTTagShort((short) 0);
-		}
-
-		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
 			// Preconditions
 			if (input == null) {
@@ -123,11 +108,6 @@ public enum NBTTagType {
 	 * TAG_Int
 	 */
 	INT ((byte) 3, "TAG_Int") {
-
-		@Override
-		public INBTTag<?> create() {
-			return new NBTTagInt(0);
-		}
 
 		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
@@ -156,11 +136,6 @@ public enum NBTTagType {
 	LONG ((byte) 4, "TAG_Long") {
 
 		@Override
-		public INBTTag<?> create() {
-			return new NBTTagLong(0L);
-		}
-
-		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
 			// Preconditions
 			if (input == null) {
@@ -185,11 +160,6 @@ public enum NBTTagType {
 	 * TAG_Float
 	 */
 	FLOAT ((byte) 5, "TAG_Float") {
-
-		@Override
-		public INBTTag<?> create() {
-			return new NBTTagFloat(0F);
-		}
 
 		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
@@ -217,11 +187,6 @@ public enum NBTTagType {
 	DOUBLE ((byte) 6, "TAG_Double") {
 
 		@Override
-		public INBTTag<?> create() {
-			return new NBTTagDouble(0D);
-		}
-
-		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
 			// Preconditions
 			if (input == null) {
@@ -245,11 +210,6 @@ public enum NBTTagType {
 	 * TAG_Byte_Array
 	 */
 	BYTE_ARRAY ((byte) 7, "TAG_Byte_Array") {
-
-		@Override
-		public INBTTag<?> create() {
-			return new NBTTagByteArray(new byte[0]);
-		}
 
 		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
@@ -286,11 +246,6 @@ public enum NBTTagType {
 	STRING ((byte) 8, "TAG_String") {
 
 		@Override
-		public INBTTag<?> create() {
-			return new NBTTagString("");
-		}
-
-		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
 			// Preconditions
 			if (input == null) {
@@ -316,11 +271,6 @@ public enum NBTTagType {
 	 * TAG_List
 	 */
 	LIST ((byte) 9, "TAG_List") {
-
-		@Override
-		public INBTTag<?> create() {
-			return new NBTTagList(NBTTagType.END, new INBTTag[0]);
-		}
 
 		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
@@ -367,11 +317,6 @@ public enum NBTTagType {
 	 * TAG_Compound
 	 */
 	COMPOUND ((byte) 10, "TAG_Compound") {
-
-		@Override
-		public INBTTag<?> create() {
-			return new NBTTagCompound(new LinkedHashMap<>());
-		}
 
 		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
@@ -423,11 +368,6 @@ public enum NBTTagType {
 	INT_ARRAY ((byte) 11, "TAG_Int_Array") {
 
 		@Override
-		public INBTTag<?> create() {
-			return new NBTTagIntArray(new int[0]);
-		}
-
-		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
 			// Preconditions
 			if (input == null) {
@@ -460,11 +400,6 @@ public enum NBTTagType {
 	 * TAG_Long_Array
 	 */
 	LONG_ARRAY ((byte) 12, "TAG_Long_Array") {
-
-		@Override
-		public INBTTag<?> create() {
-			return new NBTTagLongArray(new long[0]);
-		}
 
 		@Override
 		public INBTTag<?> read(DataInput input, int depth, NBTSizeLimiter limiter) throws IOException {
@@ -527,13 +462,6 @@ public enum NBTTagType {
 	}
 
 	/**
-	 * Create a new tag with default values.
-	 *
-	 * @return the created instance.
-	 */
-	public abstract INBTTag<?> create();
-
-	/**
 	 * Read a tag from data input.
 	 *
 	 * @param input Target input.
@@ -553,6 +481,26 @@ public enum NBTTagType {
 	public static NBTTagType fromId(byte id) {
 		for (NBTTagType type : values()) {
 			if (id == type.getId()) {
+				return type;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get a type from name.
+	 *
+	 * @param name Target name.
+	 * @return the type or null if no type with the given name exists.
+	 */
+	public static NBTTagType fromName(String name) {
+		// Preconditions
+		if (name == null) {
+			throw new NullPointerException("Name cannot be null");
+		}
+
+		for (NBTTagType type : values()) {
+			if (name.equals(type.getName())) {
 				return type;
 			}
 		}

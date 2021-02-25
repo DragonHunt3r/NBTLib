@@ -14,28 +14,30 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A compound tag.
- * This tag is valid if a value is set, all entries have non-null keys and values and all values are valid.
+ * This tag is valid if all entries have non-null keys and values and all values are valid.
  *
  * @author SteelPhoenix
  */
-public class NBTTagCompound extends AbstractMapNBTTag {
+public class NBTTagCompound extends AbstractMapNBTTag<INBTTag<?>> {
 
 	public static final NBTTagType TYPE = NBTTagType.COMPOUND;
 	private static final Pattern SIMPLE = Pattern.compile("[A-Za-z0-9._+-]+");
 
 	public NBTTagCompound() {
-		super(TYPE);
+		this(new LinkedHashMap<>(0));
 	}
 
 	public NBTTagCompound(Map<String, INBTTag<?>> value) {
-		super(TYPE);
+		super(TYPE, new LinkedHashMap<>(0));
 		setValue(value);
 	}
 
 	@Override
 	public Map<String, INBTTag<?>> getValue() {
-		Map<String, INBTTag<?>> map = new LinkedHashMap<>();
-		forEach((k, v) -> map.put(k, v.copy()));
+		Map<String, INBTTag<?>> map = new LinkedHashMap<>(size());
+		for (Entry<String, INBTTag<?>> entry : entrySet()) {
+			map.put(entry.getKey(), entry.getValue() == null ? null : entry.getValue().copy());
+		}
 		return map;
 	}
 
@@ -46,9 +48,11 @@ public class NBTTagCompound extends AbstractMapNBTTag {
 			throw new NullPointerException("Value cannot be null");
 		}
 
-		Map<String, INBTTag<?>> map = new LinkedHashMap<>();
-		value.forEach((k, v) -> map.put(k, v.copy()));
-		setValue(map);
+		Map<String, INBTTag<?>> map = new LinkedHashMap<>(size());
+		for (Entry<String, INBTTag<?>> entry : value.entrySet()) {
+			map.put(entry.getKey(), entry.getValue() == null ? null : entry.getValue().copy());
+		}
+		setValue0(map);
 	}
 
 	@Override
@@ -61,7 +65,7 @@ public class NBTTagCompound extends AbstractMapNBTTag {
 			throw new MalformedNBTException("Tag is not valid");
 		}
 
-		for (Entry<String, INBTTag<?>> entry : super.getValue().entrySet()) {
+		for (Entry<String, INBTTag<?>> entry : entrySet()) {
 			INBTTag<?> tag = entry.getValue();
 			output.writeByte(tag.getTypeId());
 
@@ -83,10 +87,7 @@ public class NBTTagCompound extends AbstractMapNBTTag {
 	@Override
 	public NBTTagCompound copy() {
 		NBTTagCompound tag = new NBTTagCompound();
-
-		// Create a copy if there is a value set
-		tag.setValue0(getValue0() == null ? null : getValue());
-
+		tag.setValue0(getValue());
 		return tag;
 	}
 

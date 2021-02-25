@@ -9,7 +9,7 @@ import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
  * A long tag.
- * This tag is valid if a value is set.
+ * This tag is always valid.
  *
  * @author SteelPhoenix
  */
@@ -18,12 +18,11 @@ public class NBTTagLong extends AbstractNumericNBTTag<Long> {
 	public static final NBTTagType TYPE = NBTTagType.LONG;
 
 	public NBTTagLong() {
-		super(TYPE);
+		this(0L);
 	}
 
 	public NBTTagLong(long value) {
-		super(TYPE);
-		setValue(Long.valueOf(value));
+		super(TYPE, Long.valueOf(value));
 	}
 
 	@Override
@@ -62,7 +61,7 @@ public class NBTTagLong extends AbstractNumericNBTTag<Long> {
 	@Override
 	public NBTTagLong copy() {
 		NBTTagLong tag = new NBTTagLong();
-		tag.setValue0(getValue0());
+		tag.setValue0(getValue());
 		return tag;
 	}
 

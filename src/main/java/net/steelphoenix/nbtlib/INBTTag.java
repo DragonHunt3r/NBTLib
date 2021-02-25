@@ -43,6 +43,7 @@ public interface INBTTag<T> {
 
 	/**
 	 * Write the tag to a data output.
+	 * Note that this requires the tag to be valid.
 	 *
 	 * @param output Target data output.
 	 * @throws IOException if an I/O error occurs.
@@ -58,6 +59,7 @@ public interface INBTTag<T> {
 
 	/**
 	 * Get a stringified NBT representation of this tag.
+	 * Note that this requires the tag to be valid.
 	 *
 	 * @return the SNBT representation.
 	 */
