@@ -84,8 +84,31 @@ public class NBTUtil {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public static void write(DataOutput output, NBTTagCompound tag) throws IOException {
+		write(output, tag, "");
+	}
+
+	/**
+	 * Write a named compound tag to a data output.
+	 *
+	 * @param output Target output.
+	 * @param tag Target tag.
+	 * @param name Target name.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public static void write(DataOutput output, NBTTagCompound tag, String name) throws IOException {
+		// Preconditoins
+		if (output == null) {
+			throw new NullPointerException("Output cannot be null");
+		}
+		if (tag == null) {
+			throw new NullPointerException("Tag cannot be null");
+		}
+		if (name == null) {
+			throw new NullPointerException("Name cannot be null");
+		}
+
 		output.writeByte(tag.getTypeId());
-		output.writeUTF("");
+		output.writeUTF(name);
 		tag.write(output);
 	}
 
@@ -97,6 +120,11 @@ public class NBTUtil {
 	 * @return the parsed tag.
 	 */
 	public static NBTTagCompound parse(String text) {
+		// Preconditions
+		if (text == null) {
+			throw new NullPointerException("Text cannot be null");
+		}
+
 		Lexer lexer = new Lexer(text);
 		NBTTagCompound tag = readCompound(lexer);
 		if (lexer.canRead()) {
