@@ -8,14 +8,9 @@ package net.steelphoenix.nbtlib;
  */
 public class NBTSizeLimiter {
 
-	public static final NBTSizeLimiter UNLIMITED = new NBTSizeLimiter(0L) {
-		@Override
-		public void addBytesRead(long read) {
-			// Nothing
-		}
-	};
+	public static final NBTSizeLimiter UNLIMITED = new UnlimitedSizeLimiter();
 	private final long max;
-	private long count = 0;
+	private long count = 0L;
 
 	public NBTSizeLimiter(long max) {
 		if (max < 0) {
@@ -41,6 +36,23 @@ public class NBTSizeLimiter {
 		count += read;
 		if (count > max) {
 			throw new MalformedNBTException("NBT tag is larger than allowed (" + max + " byte(s))");
+		}
+	}
+
+	/**
+	 * An unlimited size limiter.
+	 *
+	 * @author SteelPhoenix
+	 */
+	private static class UnlimitedSizeLimiter extends NBTSizeLimiter {
+
+		private UnlimitedSizeLimiter() {
+			super(0L);
+		}
+
+		@Override
+		public void addBytesRead(long read) {
+			// Nothing
 		}
 	}
 }

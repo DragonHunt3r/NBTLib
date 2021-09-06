@@ -54,7 +54,17 @@ public class NBTUtil {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public static NBTTagCompound read(DataInput input, NBTSizeLimiter limiter) throws IOException {
-		return readNamed(input, limiter).getKey();
+		return readNamed(input, limiter).getValue();
+	}
+
+	/**
+	 * Read a named compound tag from a data input.
+	 * @param input Target input.
+	 * @return the read compound tag and name.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public static Entry<String, NBTTagCompound> readNamed(DataInput input) throws IOException {
+		return readNamed(input, NBTSizeLimiter.UNLIMITED);
 	}
 
 	/**
@@ -65,7 +75,7 @@ public class NBTUtil {
 	 * @return the read compound tag and name.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public static Entry<NBTTagCompound, String> readNamed(DataInput input, NBTSizeLimiter limiter) throws IOException {
+	public static Entry<String, NBTTagCompound> readNamed(DataInput input, NBTSizeLimiter limiter) throws IOException {
 		// Preconditions
 		if (input == null) {
 			throw new NullPointerException("Input cannot be null");
@@ -84,10 +94,8 @@ public class NBTUtil {
 			throw new MalformedNBTException("Root is not of type " + NBTTagType.COMPOUND.getName());
 		}
 
-		String name = input.readUTF();
-		NBTTagCompound compound = (NBTTagCompound) type.read(input, 0, limiter);
-
-		return new SimpleImmutableEntry<>(compound, name);
+		// Note that trailing data is ignored
+		return new SimpleImmutableEntry<>(input.readUTF(), (NBTTagCompound) type.read(input, 0, limiter));
 	}
 
 	/**
@@ -110,7 +118,7 @@ public class NBTUtil {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public static void writeNamed(DataOutput output, NBTTagCompound tag, String name) throws IOException {
-		// Preconditoins
+		// Preconditions
 		if (output == null) {
 			throw new NullPointerException("Output cannot be null");
 		}
