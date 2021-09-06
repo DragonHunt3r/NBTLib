@@ -66,6 +66,15 @@ public interface INBTTag<T> {
 	public String asSNBT();
 
 	/**
+	 * Get a stringified NBT representation of this tag.
+	 * Note that this requires the tag to be valid.
+	 *
+	 * @param pretty If the string should look pretty.
+	 * @return the SNBT representation.
+	 */
+	public String asSNBT(boolean pretty);
+
+	/**
 	 * Check if the tag is valid.
 	 *
 	 * @return if the tag is valid.

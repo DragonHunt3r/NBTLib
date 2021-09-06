@@ -39,6 +39,11 @@ public abstract class AbstractNBTTag<T> implements INBTTag<T> {
 	}
 
 	@Override
+	public String asSNBT() {
+		return asSNBT(false);
+	}
+
+	@Override
 	public boolean isValid() {
 		return true;
 	}

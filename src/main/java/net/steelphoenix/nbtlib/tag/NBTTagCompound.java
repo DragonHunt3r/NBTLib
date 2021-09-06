@@ -2,10 +2,8 @@ package net.steelphoenix.nbtlib.tag;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import net.steelphoenix.nbtlib.AbstractMapNBTTag;
 import net.steelphoenix.nbtlib.INBTTag;
@@ -21,7 +19,6 @@ import net.steelphoenix.nbtlib.NBTTagType;
 public class NBTTagCompound extends AbstractMapNBTTag<INBTTag<?>> {
 
 	public static final NBTTagType TYPE = NBTTagType.COMPOUND;
-	private static final Pattern SIMPLE = Pattern.compile("[A-Za-z0-9._+-]+");
 
 	public NBTTagCompound() {
 		this(new LinkedHashMap<>(0));
@@ -92,29 +89,7 @@ public class NBTTagCompound extends AbstractMapNBTTag<INBTTag<?>> {
 	}
 
 	@Override
-	public String asSNBT() {
-		// Preconditions
-		if (!isValid()) {
-			throw new MalformedNBTException("Tag is not valid");
-		}
-
-		StringBuilder builder = new StringBuilder();
-		builder.append('{');
-		Iterator<Entry<String, INBTTag<?>>> iterator = entrySet().iterator();
-		boolean first = true;
-		while (iterator.hasNext()) {
-			if (!first) {
-				builder.append(',');
-			}
-			first = false;
-			Entry<String, INBTTag<?>> entry = iterator.next();
-			builder
-					// Cheeky NBTTagString so we do not have to rewrite formatting logic
-					.append(SIMPLE.matcher(entry.getKey()).matches() ? entry.getKey() : new NBTTagString(entry.getKey()).asSNBT())
-					.append(':')
-					.append(entry.getValue().asSNBT());
-		}
-		builder.append('}');
-		return builder.toString();
+	public String asSNBT(boolean pretty) {
+		return asSNBT(pretty, "{", "}");
 	}
 }

@@ -66,12 +66,12 @@ public class NBTTagLong extends AbstractNumericNBTTag<Long> {
 	}
 
 	@Override
-	public String asSNBT() {
+	public String asSNBT(boolean pretty) {
 		// Preconditions
 		if (!isValid()) {
 			throw new MalformedNBTException("Tag is not valid");
 		}
 
-		return getValue().toString() + "L";
+		return getValue().toString() + "l";
 	}
 }

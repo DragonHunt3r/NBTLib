@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Spliterator;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -243,5 +244,29 @@ public abstract class AbstractCollectionNBTTag<E extends INBTTag<?>> extends Abs
 				.append(']')
 				.append(']');
 		return builder.toString();
+	}
+
+	protected String asSNBT(boolean pretty, String prefix, String suffix) {
+		// Preconditions
+		if (!isValid()) {
+			throw new MalformedNBTException("Tag is not valid");
+		}
+
+		// Empty
+		if (isEmpty()) {
+			return prefix + suffix;
+		}
+
+		String newLine = pretty ? System.lineSeparator() : "";
+
+		StringJoiner joiner = new StringJoiner("," + newLine, prefix + newLine, newLine + suffix);
+		for (INBTTag<?> tag : this) {
+			String snbt = tag.asSNBT(pretty);
+			if (pretty) {
+				snbt = '\t' + snbt.replaceAll("\\R", System.lineSeparator() + '\t');
+			}
+			joiner.add(snbt);
+		}
+		return joiner.toString();
 	}
 }

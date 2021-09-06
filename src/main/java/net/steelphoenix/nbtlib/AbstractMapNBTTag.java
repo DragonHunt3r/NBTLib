@@ -4,9 +4,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.regex.Pattern;
+
+import net.steelphoenix.nbtlib.tag.NBTTagString;
 
 /**
  * A base map NBT tag implementation.
@@ -15,6 +19,8 @@ import java.util.function.Function;
  * @author SteelPhoenix
  */
 public abstract class AbstractMapNBTTag<V extends INBTTag<?>> extends AbstractNBTTag<Map<String, V>> implements IMapNBTTag<V> {
+
+	private static final Pattern SIMPLE = Pattern.compile("[A-Za-z0-9._+-]+");
 
 	protected AbstractMapNBTTag(NBTTagType type, Map<String, V> value) {
 		super(type, value);
@@ -208,5 +214,31 @@ public abstract class AbstractMapNBTTag<V extends INBTTag<?>> extends AbstractNB
 				.append(']')
 				.append(']');
 		return builder.toString();
+	}
+
+	protected String asSNBT(boolean pretty, String prefix, String suffix) {
+		// Preconditions
+		if (!isValid()) {
+			throw new MalformedNBTException("Tag is not valid");
+		}
+
+		// Empty
+		if (isEmpty()) {
+			return prefix + suffix;
+		}
+
+
+		String newLine = pretty ? System.lineSeparator() : "";
+
+		StringJoiner joiner = new StringJoiner("," + newLine, prefix + newLine, newLine + suffix);
+		for (Entry<String, V> entry : entrySet()) {
+			// Cheeky NBTTagString so we do not have to rewrite formatting logic
+			String snbt = (SIMPLE.matcher(entry.getKey()).matches() ? entry.getKey() : new NBTTagString(entry.getKey()).asSNBT(pretty)) + ':' + (pretty ? " " : "") + entry.getValue().asSNBT(pretty);
+			if (pretty) {
+				snbt = '\t' + snbt.replaceAll("\\R", System.lineSeparator() + '\t');
+			}
+			joiner.add(snbt);
+		}
+		return joiner.toString();
 	}
 }

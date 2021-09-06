@@ -46,7 +46,7 @@ public class NBTTagString extends AbstractNBTTag<String> {
 	}
 
 	@Override
-	public String asSNBT() {
+	public String asSNBT(boolean pretty) {
 		// Preconditions
 		if (!isValid()) {
 			throw new MalformedNBTException("Tag is not valid");

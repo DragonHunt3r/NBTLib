@@ -3,7 +3,6 @@ package net.steelphoenix.nbtlib.tag;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import net.steelphoenix.nbtlib.AbstractCollectionNBTTag;
@@ -80,26 +79,8 @@ public class NBTTagIntArray extends AbstractCollectionNBTTag<NBTTagInt> {
 	}
 
 	@Override
-	public String asSNBT() {
-		// Preconditions
-		if (!isValid()) {
-			throw new MalformedNBTException("Tag is not valid");
-		}
-
-		StringBuilder builder = new StringBuilder();
-		builder.append("[I;");
-		Iterator<NBTTagInt> iterator = iterator();
-		boolean first = true;
-		while (iterator.hasNext()) {
-			if (!first) {
-				builder.append(',');
-			}
-			first = false;
-			NBTTagInt tag = iterator.next();
-			builder.append(tag.getValue().toString());
-		}
-		builder.append(']');
-		return builder.toString();
+	public String asSNBT(boolean pretty) {
+		return asSNBT(pretty, "[I;", "]");
 	}
 
 	/**

@@ -32,7 +32,7 @@ public class NBTTagEnd extends AbstractNBTTag<Object> {
 	}
 
 	@Override
-	public String asSNBT() {
+	public String asSNBT(boolean pretty) {
 		return "END";
 	}
 
