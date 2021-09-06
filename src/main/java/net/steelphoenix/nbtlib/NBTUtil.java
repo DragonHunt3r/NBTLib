@@ -3,10 +3,12 @@ package net.steelphoenix.nbtlib;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.steelphoenix.nbtlib.tag.NBTTagByte;
 import net.steelphoenix.nbtlib.tag.NBTTagByteArray;
@@ -52,6 +54,18 @@ public class NBTUtil {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public static NBTTagCompound read(DataInput input, NBTSizeLimiter limiter) throws IOException {
+		return readNamed(input, limiter).getKey();
+	}
+
+	/**
+	 * Read a named compound tag from a data input.
+	 *
+	 * @param input Target input.
+	 * @param limiter Tag size limiter.
+	 * @return the read compound tag and name.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public static Entry<NBTTagCompound, String> readNamed(DataInput input, NBTSizeLimiter limiter) throws IOException {
 		// Preconditions
 		if (input == null) {
 			throw new NullPointerException("Input cannot be null");
@@ -70,10 +84,10 @@ public class NBTUtil {
 			throw new MalformedNBTException("Root is not of type " + NBTTagType.COMPOUND.getName());
 		}
 
-		// Skip root tag name
-		input.readUTF();
+		String name = input.readUTF();
+		NBTTagCompound compound = (NBTTagCompound) type.read(input, 0, limiter);
 
-		return (NBTTagCompound) type.read(input, 0, limiter);
+		return new SimpleImmutableEntry<>(compound, name);
 	}
 
 	/**
@@ -84,7 +98,7 @@ public class NBTUtil {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public static void write(DataOutput output, NBTTagCompound tag) throws IOException {
-		write(output, tag, "");
+		writeNamed(output, tag, "");
 	}
 
 	/**
@@ -95,7 +109,7 @@ public class NBTUtil {
 	 * @param name Target name.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public static void write(DataOutput output, NBTTagCompound tag, String name) throws IOException {
+	public static void writeNamed(DataOutput output, NBTTagCompound tag, String name) throws IOException {
 		// Preconditoins
 		if (output == null) {
 			throw new NullPointerException("Output cannot be null");
