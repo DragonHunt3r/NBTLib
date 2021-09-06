@@ -47,7 +47,7 @@ public enum NBTTagType {
 			}
 
 			limiter.addBytesRead(8L);
-			return new NBTTagEnd();
+			return NBTTagEnd.getInstance();
 		}
 	},
 

@@ -4,6 +4,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import net.steelphoenix.nbtlib.AbstractNBTTag;
+import net.steelphoenix.nbtlib.INBTTag;
 import net.steelphoenix.nbtlib.NBTTagType;
 
 /**
@@ -16,8 +17,9 @@ public class NBTTagEnd extends AbstractNBTTag<Object> {
 
 	public static final NBTTagType TYPE = NBTTagType.END;
 	private static final Object OBJECT = new Object();
+	private static final INBTTag<?> INSTANCE = new NBTTagEnd();
 
-	public NBTTagEnd() {
+	private NBTTagEnd() {
 		super(TYPE, OBJECT);
 	}
 
@@ -45,5 +47,9 @@ public class NBTTagEnd extends AbstractNBTTag<Object> {
 	@Override
 	protected void setValue0(Object value) {
 		throw new UnsupportedOperationException("Cannot set data for " + getType().getName());
+	}
+
+	public static INBTTag<?> getInstance() {
+		return INSTANCE;
 	}
 }
