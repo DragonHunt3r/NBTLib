@@ -80,7 +80,7 @@ public class NBTTagIntArray extends AbstractCollectionNBTTag<NBTTagInt> {
 
 	@Override
 	public String asSNBT(boolean pretty) {
-		return asSNBT(pretty, "[I;", "]");
+		return asSNBT(pretty, "[I;", "]", (tag, flag) -> tag.asSNBT(flag));
 	}
 
 	/**

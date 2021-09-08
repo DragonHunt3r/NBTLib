@@ -260,7 +260,7 @@ public enum NBTTagType {
 
 			limiter.addBytesRead(36L);
 			String string = input.readUTF();
-			limiter.addBytesRead(16L * string.length());
+			limiter.addBytesRead(2L * string.length());
 			NBTTagString tag = new NBTTagString();
 			tag.setValue0(string);
 			return tag;

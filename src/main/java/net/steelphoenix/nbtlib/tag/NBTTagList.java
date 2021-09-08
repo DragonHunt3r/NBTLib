@@ -97,7 +97,7 @@ public class NBTTagList extends AbstractCollectionNBTTag<INBTTag<?>> {
 
 	@Override
 	public String asSNBT(boolean pretty) {
-		return asSNBT(pretty, "[", "]");
+		return asSNBT(pretty, "[", "]", (tag, flag) -> tag.asSNBT(flag));
 	}
 
 	/**

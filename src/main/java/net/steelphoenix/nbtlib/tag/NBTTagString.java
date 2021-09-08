@@ -52,11 +52,12 @@ public class NBTTagString extends AbstractNBTTag<String> {
 			throw new MalformedNBTException("Tag is not valid");
 		}
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(' ');
+		String value = getValue();
+		StringBuilder builder = new StringBuilder()
+				.append(' ');
 		char quote = '\0';
-		for (int i = 0; i < getValue().length(); i++) {
-			char c = getValue().charAt(i);
+		for (int i = 0; i < value.length(); i++) {
+			char c = value.charAt(i);
 			if (c == '\\') {
 				builder.append('\\');
 			}
@@ -74,7 +75,8 @@ public class NBTTagString extends AbstractNBTTag<String> {
 			quote = '\"';
 		}
 		builder.setCharAt(0, quote);
-		builder.append(quote);
-		return builder.toString();
+		return builder
+				.append(quote)
+				.toString();
 	}
 }

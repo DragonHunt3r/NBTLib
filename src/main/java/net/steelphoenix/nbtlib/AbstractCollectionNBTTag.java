@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Spliterator;
 import java.util.StringJoiner;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -246,8 +247,17 @@ public abstract class AbstractCollectionNBTTag<E extends INBTTag<?>> extends Abs
 		return builder.toString();
 	}
 
-	protected String asSNBT(boolean pretty, String prefix, String suffix) {
+	protected String asSNBT(boolean pretty, String prefix, String suffix, BiFunction<? super E, ? super Boolean, ? extends String> stringFunction) {
 		// Preconditions
+		if (prefix == null) {
+			throw new NullPointerException("Prefix cannot be null");
+		}
+		if (suffix == null) {
+			throw new NullPointerException("Suffix cannot be null");
+		}
+		if (stringFunction == null) {
+			throw new NullPointerException("String function cannot be null");
+		}
 		if (!isValid()) {
 			throw new MalformedNBTException("Tag is not valid");
 		}
@@ -260,8 +270,8 @@ public abstract class AbstractCollectionNBTTag<E extends INBTTag<?>> extends Abs
 		String newLine = pretty ? System.lineSeparator() : "";
 
 		StringJoiner joiner = new StringJoiner("," + newLine, prefix + newLine, newLine + suffix);
-		for (INBTTag<?> tag : this) {
-			String snbt = tag.asSNBT(pretty);
+		for (E tag : this) {
+			String snbt = stringFunction.apply(tag, pretty);
 			if (pretty) {
 				snbt = '\t' + snbt.replaceAll("\\R", System.lineSeparator() + '\t');
 			}

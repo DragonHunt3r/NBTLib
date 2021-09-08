@@ -72,6 +72,8 @@ public class NBTTagLong extends AbstractNumericNBTTag<Long> {
 			throw new MalformedNBTException("Tag is not valid");
 		}
 
-		return getValue().toString() + "l";
+		// For some reason this is an upper-case suffix in Minecraft code
+		// Other number suffixes are lower-case
+		return getValue().toString() + 'L';
 	}
 }

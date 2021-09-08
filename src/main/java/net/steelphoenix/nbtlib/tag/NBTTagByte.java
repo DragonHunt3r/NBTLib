@@ -74,6 +74,6 @@ public class NBTTagByte extends AbstractNumericNBTTag<Byte> {
 			throw new MalformedNBTException("Tag is not valid");
 		}
 
-		return getValue().toString() + "b";
+		return getValue().toString() + 'b';
 	}
 }

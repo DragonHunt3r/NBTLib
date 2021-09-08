@@ -76,7 +76,7 @@ public class NBTTagDouble extends AbstractNumericNBTTag<Double> {
 			throw new MalformedNBTException("Tag is not valid");
 		}
 
-		return getValue().toString() + "d";
+		return getValue().toString() + 'd';
 	}
 
 	/**

@@ -80,7 +80,8 @@ public class NBTTagLongArray extends AbstractCollectionNBTTag<NBTTagLong> {
 
 	@Override
 	public String asSNBT(boolean pretty) {
-		return asSNBT(pretty, "[L;", "]");
+		// To uppercase because Minecraft does this
+		return asSNBT(pretty, "[L;", "]", (tag, flag) -> tag.asSNBT(flag).toUpperCase());
 	}
 
 	/**

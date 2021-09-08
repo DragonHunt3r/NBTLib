@@ -70,7 +70,7 @@ public class NBTTagFloat extends AbstractNumericNBTTag<Float> {
 			throw new MalformedNBTException("Tag is not valid");
 		}
 
-		return getValue().toString() + "f";
+		return getValue().toString() + 'f';
 	}
 
 	/**

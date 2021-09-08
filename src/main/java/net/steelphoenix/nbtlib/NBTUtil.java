@@ -148,9 +148,15 @@ public class NBTUtil {
 		}
 
 		Lexer lexer = new Lexer(text);
-		NBTTagCompound tag = readCompound(lexer);
+		NBTTagCompound tag;
+		try {
+			tag = readCompound(lexer);
+		} catch (LexerException exception) {
+			throw new MalformedNBTException(exception);
+		}
+		lexer.skipWhitespace();
 		if (lexer.canRead()) {
-			throw new MalformedNBTException("Unexpected trailing data at index " + lexer.getCursor() + " for: " + lexer.getFullString());
+			throw new MalformedNBTException("Unexpected trailing data at index " + lexer.getCursor());
 		}
 		return tag;
 	}
@@ -169,19 +175,23 @@ public class NBTUtil {
 
 		Map<String, INBTTag<?>> map = new LinkedHashMap<>();
 		lexer.expect('{');
+		lexer.skipWhitespace();
 		while (lexer.canRead() && lexer.peek() != '}') {
-			int i = lexer.getCursor();
 			String key;
+			lexer.skipWhitespace();
+			int i = lexer.getCursor();
 			if (!lexer.canRead() || (key = lexer.readString()).isEmpty()) {
-				lexer.setCursor(i);
-				throw new MalformedNBTException("Expected key at index " + lexer.getCursor() + " for: " + lexer.getFullString());
+				throw new MalformedNBTException("Expected key at index " + i);
 			}
 			lexer.expect(':');
 			map.put(key, readValue(lexer));
 
+			lexer.skipWhitespace();
+
 			// If there are more elements
 			if (lexer.canRead() && lexer.peek() == ',') {
-				lexer.read();
+				lexer.skip();
+				lexer.skipWhitespace();
 			}
 			else {
 				break;
@@ -208,16 +218,20 @@ public class NBTUtil {
 		// List start
 		lexer.expect('[');
 
+		lexer.skipWhitespace();
+
 		ICollectionNBTTag<?> tag;
 		NBTTagType type;
 
 		// [<type>;
-		if (lexer.canRead(2) && (lexer.peek() == '\"' || lexer.peek() == '\'') && lexer.peek(1) == ';') {
+		if (lexer.canRead(2) && (lexer.peek() != '\"' && lexer.peek() != '\'') && lexer.peek(1) == ';') {
 			int i = lexer.getCursor();
 			char c = lexer.read();
 
 			// Skip semicolon
-			lexer.read();
+			lexer.skip();
+
+			lexer.skipWhitespace();
 
 			// Create tag
 			switch (c) {
@@ -231,8 +245,7 @@ public class NBTUtil {
 					tag = new NBTTagLongArray();
 					break;
 				default:
-					lexer.setCursor(i);
-					throw new MalformedNBTException("Unknown array type '" + c + "' at index " + lexer.getCursor() + " for: " + lexer.getFullString());
+					throw new MalformedNBTException("Unknown array type '" + c + "' at index " + i);
 			}
 
 			type = tag.getElementType();
@@ -248,7 +261,7 @@ public class NBTUtil {
 
 		// No more data
 		if (!lexer.canRead()) {
-			throw new MalformedNBTException("Expected value at index " + lexer.getCursor() + " for: " + lexer.getFullString());
+			throw new MalformedNBTException("Expected value at index " + lexer.getCursor());
 		}
 
 		while (lexer.canRead() && lexer.peek() != ']') {
@@ -267,6 +280,8 @@ public class NBTUtil {
 			}
 
 			list.add(element);
+
+			lexer.skipWhitespace();
 
 			// If there are more elements
 			if (lexer.canRead() && lexer.peek() == ',') {
@@ -301,9 +316,11 @@ public class NBTUtil {
 			throw new NullPointerException("Lexer cannot be null");
 		}
 
+		lexer.skipWhitespace();
+
 		// End of stream
 		if (!lexer.canRead()) {
-			throw new MalformedNBTException("Expected value at index " + lexer.getCursor() + " for: " + lexer.getFullString());
+			throw new MalformedNBTException("Expected value at index " + lexer.getCursor());
 		}
 
 		char c = lexer.peek();
@@ -327,14 +344,18 @@ public class NBTUtil {
 			return new NBTTagString(string);
 		}
 
+		// No characters read
 		if (string.isEmpty()) {
 			lexer.setCursor(i);
-			throw new MalformedNBTException("Expected value at index " + lexer.getCursor() + " for: " + lexer.getFullString());
+			throw new MalformedNBTException("Expected value at index " + lexer.getCursor());
 		}
 
 		char suffix = string.charAt(string.length() - 1);
 
 		// Try to parse based on suffix
+		// Note that this is not true to the way Minecraft parses SNBT as that tests patterns and we just try based on suffix
+		// This also means some numbers can get parsed where Minecraft would complain like NaNf
+		// TODO: Pattern based numeric matching
 		switch (suffix) {
 			case 'b':
 			case 'B':
@@ -373,6 +394,15 @@ public class NBTUtil {
 				}
 			default:
 				break;
+		}
+
+		// No suffix double matching if the string contains a period
+		if (string.indexOf('.') != -1) {
+			try {
+				return new NBTTagDouble(Double.parseDouble(string));
+			} catch (NumberFormatException exception) {
+				//
+			}
 		}
 
 		// Integer does not have a specific suffix
